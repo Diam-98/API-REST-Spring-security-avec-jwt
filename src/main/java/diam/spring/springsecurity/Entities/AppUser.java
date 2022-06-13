@@ -21,8 +21,7 @@ public class AppUser {
     private Long id;
     private String userName;
     private String password;
-    @ManyToMany
-    @ToString.Exclude
+    @ManyToMany(fetch = FetchType.EAGER) // a chaque fois que charge un user je charge ses roles aussi avec FetchType.EAGER
     private Collection<AppRoles> appRoles;
 
     @Override
