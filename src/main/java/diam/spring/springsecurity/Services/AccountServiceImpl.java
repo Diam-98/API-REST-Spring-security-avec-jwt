@@ -4,8 +4,9 @@ import diam.spring.springsecurity.Entities.AppRoles;
 import diam.spring.springsecurity.Entities.AppUser;
 import diam.spring.springsecurity.Repositories.AppRolesRepository;
 import diam.spring.springsecurity.Repositories.AppUserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,11 +14,15 @@ import java.util.List;
 
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
 
-    private AppUserRepository appUserRepository;
-    private AppRolesRepository appRolesRepository;
+    private final AppUserRepository appUserRepository;
+    private final AppRolesRepository appRolesRepository;
+
+    @Bean
+    private PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
 
     public AccountServiceImpl(AppUserRepository appUserRepository, AppRolesRepository appRolesRepository) {
         this.appUserRepository = appUserRepository;
@@ -26,6 +31,8 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AppUser addNewUser(AppUser appUser) {
+        String password = appUser.getPassword();
+        appUser.setPassword(passwordEncoder().encode(password));
         return appUserRepository.save(appUser);
     }
 
@@ -43,11 +50,11 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AppUser loadUserByUserName(String userName) {
-        return null;
+        return appUserRepository.findByUserName(userName);
     }
 
     @Override
     public List<AppUser> listUsers() {
-        return null;
+        return appUserRepository.findAll();
     }
 }
