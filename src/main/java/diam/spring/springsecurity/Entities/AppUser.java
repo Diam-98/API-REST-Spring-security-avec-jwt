@@ -1,5 +1,7 @@
 package diam.spring.springsecurity.Entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 import org.hibernate.Hibernate;
 
@@ -11,7 +13,6 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
 @AllArgsConstructor
 @NoArgsConstructor
 public class AppUser {
@@ -20,6 +21,8 @@ public class AppUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String userName;
+    // le mot de passe encode ne sera pas visible dans le format JSON
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     @ManyToMany(fetch = FetchType.EAGER) // a chaque fois que charge un user je charge ses roles aussi avec FetchType.EAGER
     private Collection<AppRoles> appRoles;
